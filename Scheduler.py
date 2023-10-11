@@ -2,6 +2,14 @@ from DB_Object import DB_Object
 import threading
 import time
 
+"""
+
+Main things to work on:
+
+1) in @threadedMethod, be able to run the file based on filename
+2) in @DB_Object, connect to the db. make sure to use gitignore or env object
+
+"""
 class Scheduler:
 	def __init__(self):
 		self.lock = threading.Lock()
@@ -54,7 +62,8 @@ class Scheduler:
 			if (isinstance(labels, list) and isinstance(output, list) 
 				and len(labels) == len(output)):
 
-				#create sql statement
+				statement = f"INSERT INTO {table} ({', '.join(labels)}) VALUES ({', '.join(['%s' for _ in labels])})"
+				vals = tuple(output)
 
 				addData(statement, vals)
 
