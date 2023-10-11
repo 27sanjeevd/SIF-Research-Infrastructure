@@ -3,31 +3,36 @@ import threading
 import time
 
 class Scheduler:
-	def __init__(self, numObjects, files):
+	def __init__(self):
 		self.lock = threading.Lock()
 		self.available_objects = []
+		self.threads = []
+		
 
+	def createDBObjects(self, numObjects):
 		for x in range(numObjects):
 			self.available_objects.append(DB_Object())
 
-
-		self.threads = []
-		for x in range(len(files)):
+	def readFiles(self, files):
+		for file_name, sleep_time in files:
 			self.threads.append(threading.Thread(target=self.threadedMethod, 
-				args=(files[x][0], files[x][1],)))
+				args=(file_name, sleep_time)))
 
-		for x in range(len(self.threads)):
-			self.threads[x].start()
+		for thread in self.threads:
+			thread.start()
 
-		for x in range(len(self.threads)):
-			self.threads[x].join()
 
 	def getObject(self):
+		check1 = False
+
 		with self.lock:
 			if self.available_objects:
 				obj = self.available_objects.pop()
 			else:
-				obj = DB_Object()
+				check1 = True
+
+		if check1:
+			obj = DB_Object()
 
 		return obj
 
@@ -42,16 +47,16 @@ class Scheduler:
 		self.returnObject(db_object)
 
 
-
 	def threadedMethod(self, fileName, sleep_time):
 		while True:
-			output = fileName()
+			table, labels, output = fileName()
 
-			#Add data validity checking
-			addData(output)
+			if (isinstance(labels, list) and isinstance(output, list) 
+				and len(labels) == len(output)):
+
+				#create sql statement
+
+				addData(statement, vals)
 
 			time.sleep(sleep_time)
 
-
-
-temp = Scheduler(15)
